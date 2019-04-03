@@ -5,7 +5,7 @@
 """
 from __future__ import print_function
 
-import time
+from time import process_time
 import os,yaml
 import ORAW
 import glob
@@ -25,7 +25,7 @@ export_name = 'ORAW_rtest'
 walk_dir = './data/PET' (directory of your data)
 ######################################
 '''
-start_time = time.clock()
+start_time = process_time()
 
 
 #-------------------------USER-------------------------------
@@ -33,9 +33,10 @@ start_time = time.clock()
 # roi = 'all'
 roi = '[Gg][Tt][Vv]'
 export_format = 'csv'
-# export_format = 'rdf'
+#export_format = 'rdf'
 export_name = 'ORAW_'
 walk_dir = './data/CT'
+
 #-----------------create tmp CT/STRUCT directories-----------
 CTWorkingDir = "./CTFolder"
 STRUCTWorkingDir = "./StructFolder"
@@ -138,4 +139,5 @@ for ptid in dicomDb.getPatientIds():
             #     }
             # )
         print("Done for struct %s of patient %s" % (myStructUID, ptid))
-print("--- %s seconds ---" % (time.clock() - start_time)) 
+stop_time = process_time()
+print("--- %s seconds ---" % (stop_time - start_time)) 
