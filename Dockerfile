@@ -1,4 +1,4 @@
-FROM python:2.7
+FROM python:3.6
 
 #RUN apt-get update
 # RUN wget https://bootstrap.pypa.io/get-pip.py
@@ -8,8 +8,8 @@ RUN apt-get update && apt-get install -y unzip python-dev
 
 RUN pip install pandas SPARQLWrapper rdflib
 
-#RUN wget https://github.com/Radiomics/pyradiomics/archive/1.3.0.zip && \
-#    unzip 1.3.0.zip
+#RUN wget https://github.com/Radiomics/pyradiomics/archive/2.1.0.zip && \
+#    unzip 2.1.0.zip
 RUN git clone https://github.com/Radiomics/pyradiomics.git
 
 RUN cd /pyradiomics && \
