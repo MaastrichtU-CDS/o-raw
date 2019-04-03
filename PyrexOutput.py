@@ -6,7 +6,7 @@
 
 from rdflib import Graph, Literal
 from rdflib.namespace import Namespace,URIRef,RDF,RDFS
-import urllib
+import urllib.parse
 import os
 import csv
 from datetime import datetime
@@ -91,10 +91,10 @@ def RadiomicsRDF(featureVector,exportDir,patientID,myStructUID,ROI,export_format
 	#------------------------RDF entities---------------------------------
 	RDF_patid = URIRef(localhost_patient+patientID)
 	RDF_scan = URIRef(localhost_scan + myStructUID)
-	RDF_imagevolume = URIRef(localhost_imagevolume + myStructUID + '_' + urllib.quote(ROI))
-	RDF_imagespace = URIRef(localhost_imagespace + myStructUID + '_' + urllib.quote(ROI))
-	RDF_featureparameter = URIRef(localhost_featureparameter + myStructUID + '_' + urllib.quote(ROI))
-	RDF_ROI = URIRef(localhost_ROI+ '_' + urllib.quote(ROI))
+	RDF_imagevolume = URIRef(localhost_imagevolume + myStructUID + '_' + urllib.parse.quote(ROI))
+	RDF_imagespace = URIRef(localhost_imagespace + myStructUID + '_' + urllib.parse.quote(ROI))
+	RDF_featureparameter = URIRef(localhost_featureparameter + myStructUID + '_' + urllib.parse.quote(ROI))
+	RDF_ROI = URIRef(localhost_ROI+ myStructUID + '_' + urllib.parse.quote(ROI))
 	RDF_mm = URIRef(localhost_mm)
 	RDF_mm2 = URIRef(localhost_mm2)
 	RDF_mm3 = URIRef(localhost_mm3)
@@ -149,7 +149,7 @@ def RadiomicsRDF(featureVector,exportDir,patientID,myStructUID,ROI,export_format
 		tmp_uri = URIRef(df_RO.iloc[:,1][ind])
 		tmp_value = Literal(radiomics_value[i])
 		#---------------------------------RDF entity for feature
-		RDF_feature = URIRef(localhost_feature + myStructUID + '_' + urllib.quote(ROI) + '_'  + radiomics_key[i])
+		RDF_feature = URIRef(localhost_feature + myStructUID + '_' + urllib.parse.quote(ROI) + '_'  + radiomics_key[i])
 		RDF_imagetype = Literal(radiomics_imagetype)
 		RDF_binwidth = Literal('binwidth: ' + str(radiomics_binwidth))
 		RDF_featureparameterspace = URIRef(featureparameterspace_uri + '_'  + radiomics_key[i])
