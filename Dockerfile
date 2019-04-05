@@ -6,7 +6,7 @@ FROM python:3.6
 
 RUN apt-get update && apt-get install -y unzip python-dev
 
-RUN pip install pandas SPARQLWrapper rdflib
+RUN pip install pandas SPARQLWrapper rdflib  pika requests
 
 #RUN wget https://github.com/Radiomics/pyradiomics/archive/2.1.0.zip && \
 #    unzip 2.1.0.zip
@@ -29,15 +29,17 @@ COPY ./PyrexOutput.py /o-raw/PyrexOutput.py
 COPY ./PyrexReader.py /o-raw/PyrexReader.py
 COPY ./PyrexWithParams.py /o-raw/PyrexWithParams.py
 COPY ./PyrexXNAT.py /o-raw/PyrexXNAT.py
-COPY ./Pyrex_requirements.txt /o-raw/Pyrex_requirements.txt
+COPY ./requirements.txt /o-raw/requirements.txt
+COPY ./QueueListener.py /o-raw/QueueListener.py
+COPY ./communication.py /o-raw/communication.py
 
 RUN mv /o-raw/ /pyradiomics/o-raw/ && \
     cd /pyradiomics/o-raw/ && \
-    python -m pip install -r Pyrex_requirements.txt
+    python -m pip install -r requirements.txt
 
 RUN echo "cd /pyradiomics/o-raw" >> /run.sh
 RUN echo "python ORAW_DockerScript.py" >> /run.sh
+RUN echo "python QueueListener.py" >> /run.sh
+RUN chmod +x /run.sh
 
-CMD ["sh", "/run.sh"]
-
-#Run this in command line: docker build -t jvsoest/oraw ./
+ENTRYPOINT "/run.sh" && /bin/bash
