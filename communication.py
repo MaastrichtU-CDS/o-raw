@@ -1,3 +1,5 @@
+import functools
+import threading
 import time
 import logging
 import json
@@ -88,16 +90,31 @@ class CommunicationService:
         else:
             return CommunicationService.container_decoder(obj)
 
-    def consume_queue_item(self, ch, method, properties, body):
-        print(" [x] Received %r" % body.decode())
+    def ack_message(self, channel, delivery_tag):
+        if channel.is_open:
+            channel.basic_ack(delivery_tag)
+        else:
+            pass
+
+    def consume_queue_item(self, connection, channel, delivery_tag, body):
         container = json.loads(body, object_hook=CommunicationService.object_decoder)
         logging.info('Created container: %s', container)
         CommunicationService.get_files(container.dicom_objects)
-        self.callback(container.dicom_objects)
+        try:
+            self.callback(container.dicom_objects)
+        except Exception as e:
+            logging.error('Exception occurred during processing: %s' % e, exc_info=True)
         CommunicationService.delete_files(container.dicom_objects)
         CommunicationService.notify(container)
+        cb = functools.partial(self.ack_message, channel, delivery_tag)
+        connection.add_callback_threadsafe(cb)
 
-
+    def on_message(self, channel, method_frame, header_frame, body, args):
+        (connection, threads) = args
+        delivery_tag = method_frame.delivery_tag
+        t = threading.Thread(target=self.consume_queue_item, args=(connection, channel, delivery_tag, body))
+        t.start()
+        threads.append(t)
 
     def listen_to_queue(self):
         connection = {}
@@ -111,7 +128,20 @@ class CommunicationService:
             break
 
         channel = connection.channel()
+        channel.basic_qos(prefetch_count=1)
         channel.queue_declare(queue=self.service_name, durable=True)
-        channel.basic_consume(self.service_name, self.consume_queue_item, auto_ack=True)
+        threads = []
+        on_message_callback = functools.partial(self.on_message, args=(connection, threads))
+        channel.basic_consume(self.service_name, on_message_callback)
         logging.info('Listening to queue: %s', self.service_name)
-        channel.start_consuming()
+
+        try:
+            channel.start_consuming()
+        except KeyboardInterrupt:
+            channel.stop_consuming()
+
+        # Wait for all to complete
+        for thread in threads:
+            thread.join()
+
+        connection.close()

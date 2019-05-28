@@ -1,3 +1,4 @@
+requests
 pika >= 1.0.0
 pandas
 numpy>=1.9.2
@@ -15,3 +16,5 @@ rdflib>=4.2.2
 scikit-image>=0.12.3
 pydicom>=1.0.2
 xnat>=0.2.2
+
+pydevd-pycharm~=191.7479.10

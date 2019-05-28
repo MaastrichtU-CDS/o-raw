@@ -77,11 +77,11 @@ def CalculationRun(imageName,maskName,paramsFile):
 	  exit()
 
 	# Regulate verbosity with radiomics.verbosity
-	# radiomics.setVerbosity(logging.INFO)
+	radiomics.setVerbosity(logging.INFO)
 
 	# Get the PyRadiomics logger (default log-level = INFO
 	logger = radiomics.logger
-	logger.setLevel(logging.DEBUG)  # set level to DEBUG to include debug log messages in log file
+	logger.setLevel(logging.INFO)  # set level to DEBUG to include debug log messages in log file
 
 	# Write out all log entries to a file
 	handler = logging.FileHandler(filename='testLog.txt', mode='w')

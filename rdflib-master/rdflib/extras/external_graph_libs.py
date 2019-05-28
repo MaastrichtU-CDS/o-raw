@@ -340,7 +340,7 @@ def rdflib_to_graphtool(
 if __name__ == '__main__':
     import sys
     import logging.config
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
 
     import nose
     nose.run(argv=[sys.argv[0], sys.argv[0], '-v', '--without-doctest'])

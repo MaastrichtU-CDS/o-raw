@@ -20,7 +20,7 @@ import re
 import glob
 
 # module PyrexReader:
-def match_ROIid(rtstruct_path,ROI_name): # Match ROI id in RTSTURCT to a given ROI name in the parameter file
+def match_ROIid(rtstruct_path,ROI_name): # Match ROI id in RTSTRUCT to a given ROI name in the parameter file
     mask_vol = Read_RTSTRUCT(rtstruct_path)
     M= mask_vol[0]
     for i in range(len(M.StructureSetROISequence)):

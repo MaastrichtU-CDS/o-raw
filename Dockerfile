@@ -6,13 +6,14 @@ FROM python:3.6
 
 RUN apt-get update && apt-get install -y unzip python-dev
 
-RUN pip install pandas SPARQLWrapper rdflib  pika requests
+RUN pip install pandas SPARQLWrapper rdflib  pika requests pydevd-pycharm~=191.7479.10
 
 #RUN wget https://github.com/Radiomics/pyradiomics/archive/2.1.0.zip && \
 #    unzip 2.1.0.zip
 RUN git clone https://github.com/Radiomics/pyradiomics.git
 
 RUN cd /pyradiomics && \
+    git checkout tags/2.1.0 && \
     python -m pip install -r requirements.txt && \
     python setup.py install
 
@@ -38,7 +39,6 @@ RUN mv /o-raw/ /pyradiomics/o-raw/ && \
     python -m pip install -r requirements.txt
 
 RUN echo "cd /pyradiomics/o-raw" >> /run.sh
-RUN echo "python ORAW_DockerScript.py" >> /run.sh
 RUN echo "python QueueListener.py" >> /run.sh
 RUN chmod +x /run.sh
 

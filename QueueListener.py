@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import pydicom
+import requests
 import ORAW_Docker
 import glob
 import shutil
 import time
 import os
+import logging
+import sys
+# import pydevd_pycharm
 
+from pydicom.tag import Tag
 from communication import CommunicationService
 
 
@@ -14,8 +20,8 @@ def run_oraw(dicom_objects):
     print("Running o-raw")
     start_time1 = time.clock()
     roi = 'all'
-    export_format = 'rdf'
-    export_name = 'ORAW_Dockertest-1'
+    export_format = 'csv'
+    export_name = 'o-raw'
     CTWorkingDir = "./CTFolder"
     STRUCTWorkingDir = "./StructFolder"
 
@@ -24,11 +30,14 @@ def run_oraw(dicom_objects):
     if not os.path.exists(STRUCTWorkingDir):
         os.makedirs(STRUCTWorkingDir)
 
+    patient_id = ''
     rtstruct = ''
     ct = []
     for dicom_object in dicom_objects:
         if dicom_object.sop_class_uid == '1.2.840.10008.5.1.4.1.1.481.3':
             rtstruct = dicom_object
+            dcm_header = pydicom.dcmread(dicom_object.file_path)
+            patient_id = dcm_header[Tag(0x10, 0x20)].value
         else:
             ct.append(dicom_object)
     if rtstruct == '' or len(ct) == 0:
@@ -65,6 +74,8 @@ def run_oraw(dicom_objects):
         exportDir = './RFstore/Turtle_output'  # export format is RDF
     else:
         exportDir = './RFstore/CSV_output'  # export format is CSV
+    if not os.path.exists(exportDir):
+        os.makedirs(exportDir)
     # check if the temp CT/STRUCT folder is empty
     if not (os.listdir(CTWorkingDir) == [] and os.listdir(STRUCTWorkingDir) == []):
         ct_files = glob.glob(os.path.join(CTWorkingDir, '*'))
@@ -73,30 +84,33 @@ def run_oraw(dicom_objects):
         struct_files = glob.glob(os.path.join(STRUCTWorkingDir, '*'))
         for f in struct_files:
             os.remove(f)
-    # copy RTSTRUCT file to tmp folder as 'struct.dcm'
     shutil.copy2(rtstruct.file_path, os.path.join(STRUCTWorkingDir, 'struct.dcm'))
     for i in range(len(ct)):
         shutil.copy2(ct[i].file_path, os.path.join(CTWorkingDir, str(i) + ".dcm"))
-    start_time = time.clock()
-    graph = ORAW_Docker.executeORAWbatch_all(['interobs5'], roi, rtstruct.sop_instance_uid, exportDir, export_format,
+    time.clock()
+    result = ORAW_Docker.executeORAWbatch_all([patient_id], roi, rtstruct.sop_instance_uid, exportDir, export_format,
                                              export_name, [CTWorkingDir], [STRUCTWorkingDir], excludeStructRegex,
                                              includeStructRegex)
-    print("Call O-RAW_Docker - time %s seconds ---" % (time.clock() - start_time))
-    #####################
-    # Load RDF store with new data
-    #####################
-    # get string of turtle triples (nt format)
-    # turtle = graph.serialize(format='nt')
-    #
-    # # upload to RDF store
-    # loadRequest = requests.post(baseUrl + "/repositories/" + repo + "/rdf-graphs/" + localGraphName,
-    #                             data=turtle,
-    #                             headers={
-    #                                 "Content-Type": "text/turtle"
-    #                             }
-    #                             )
-    print("Total Execution Time of O-RAW: %s seconds ---" % (time.clock() - start_time1))
+    if export_format == 'rdf':
+        turtle = result.serialize(format='nt')
+        loadRequest = requests.post(baseUrl + "/repositories/" + repo + "/rdf-graphs/" + localGraphName,
+                                    data=turtle,
+                                    headers={
+                                        "Content-Type": "text/turtle"
+                                    }
+                                    )
+    else:
+        logging.info('Extraction complete, writing CSV')
+        outputFilepath = os.path.join(exportDir, export_name+'.csv')
+        result.T.to_csv(outputFilepath, index=False, na_rep='NaN',mode='a+')
+        logging.info('CSV writing complete')
+        logging.info("Total Execution Time of O-RAW: %s seconds ---" % (time.clock() - start_time1))
 
+sys.path.append("pydevd-pycharm.egg")
+
+# docker_host_address = os.environ['DOCKER_HOST']
+# print('docker host address: %s' % docker_host_address)
+# pydevd_pycharm.settrace(docker_host_address, port=5059, stdoutToServer=True, stderrToServer=True)
 
 communication_service = CommunicationService('o-raw', run_oraw)
 communication_service.listen_to_queue()

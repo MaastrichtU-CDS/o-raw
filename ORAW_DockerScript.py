@@ -36,7 +36,7 @@ start_time1 = time.clock()
 roi = 'all'
 export_format = 'rdf'
 export_name = 'ORAW_Dockertest-1'
-walk_dir = "/data"
+walk_dir = "./data"
 #walk_dir = './ORAW_TestData'
 #-----------------create tmp CT/STRUCT directories-----------
 CTWorkingDir = "./CTFolder"
