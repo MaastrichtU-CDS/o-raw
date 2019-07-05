@@ -102,7 +102,7 @@ def run_oraw(dicom_objects):
     else:
         logging.info('Extraction complete, writing CSV')
         outputFilepath = os.path.join(exportDir, export_name+'.csv')
-        result.T.to_csv(outputFilepath, index=False, na_rep='NaN',mode='a+')
+        result.T.to_csv(outputFilepath, index=False, header=not os.path.isfile(outputFilepath),na_rep='NaN',mode='a+')
         logging.info('CSV writing complete')
         logging.info("Total Execution Time of O-RAW: %s seconds ---" % (time.clock() - start_time1))
 
@@ -127,5 +127,5 @@ sys.path.append("pydevd-pycharm.egg")
 # print('docker host address: %s' % docker_host_address)
 # pydevd_pycharm.settrace(docker_host_address, port=5059, stdoutToServer=True, stderrToServer=True)
 
-communication_service = CommunicationService('o-raw', run_oraw)
-communication_service.listen_to_queue()
+# communication_service = CommunicationService('o-raw', run_oraw)
+# communication_service.listen_to_queue()
