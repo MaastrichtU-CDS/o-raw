@@ -24,6 +24,7 @@ import radiomics
 import re
 from rdflib import Graph
 import time
+import uuid
 '''
 Usage for individual case: python HelloPyrexBatchProcessing.py 
 
@@ -195,13 +196,15 @@ def executeORAWbatch_all(ptid,roi,myStructUID,exportDir,export_format,export_nam
               print('skip ROI: %s' % target[k])
               continue
           try:
-              featureVector = flists[entry]
+              oraw_uid = pandas.Series({'uuid':uuid.uuid4().__str__()})
+              featureVector = oraw_uid.append(flists[entry])
               start_time = time.clock()
               Image,Mask = PyrexReader.Img_Bimask(Img_path[entry],RT_path[entry],target[k])
               print("Binary Mask generation - time %s seconds ---" % (time.clock() - start_time))
               logger.info('Processing Radiomics on %s of Patient (%s)',target[k],patient[entry])
               if export_format == 'csv': # save results in csv
                   try:
+                      
                       result = pandas.Series(PyrexWithParams.CalculationRun(Image,Mask,paramsFile))
                       contour = pandas.Series({'contour':target[k]})
                       structUID = pandas.Series({'structUID':myStructUID})
@@ -214,6 +217,8 @@ def executeORAWbatch_all(ptid,roi,myStructUID,exportDir,export_format,export_nam
                       Image = []
                       Mask= []
                       result=[]
+                      # uid_frame = pandas.DataFrame()
+                      # uid_frame = uid_frame.add(oraw_uid)
                       RESULT = pandas.concat([RESULT,results],axis=1)
                   except Exception as e:
                     logger.error('FEATURE EXTRACTION FAILED for CSV output: %s' % e, exc_info=True)
