@@ -116,8 +116,8 @@ rLogger = logging.getLogger('radiomics')
 
 # Set logging level
 # rLogger.setLevel(logging.INFO)  # Not needed, default log level of logger is INFO
-handler = logging.FileHandler(filename=progress_filename, mode='w')   # Create handler for writing to log file
-handler.setFormatter(logging.Formatter('%(levelname)s:%(name)s: %(message)s'))
+handler = logging.FileHandler(filename=progress_filename, mode='a+')   # Create handler for writing to log file
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 rLogger.addHandler(handler)
 logger = rLogger.getChild('batch') # Initialize logging for batch log messages
 
@@ -127,5 +127,5 @@ sys.path.append("pydevd-pycharm.egg")
 # print('docker host address: %s' % docker_host_address)
 # pydevd_pycharm.settrace(docker_host_address, port=5059, stdoutToServer=True, stderrToServer=True)
 
-# communication_service = CommunicationService('o-raw', run_oraw)
-# communication_service.listen_to_queue()
+communication_service = CommunicationService('o-raw', run_oraw)
+communication_service.listen_to_queue()
