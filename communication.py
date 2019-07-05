@@ -127,28 +127,12 @@ class CommunicationService:
                 continue
             break
 
-        outPath = r''
-        loggingFolder = os.path.join(outPath, 'log')
-        if not os.path.exists(loggingFolder):
-            os.makedirs(loggingFolder)
-        progress_filename = os.path.join(loggingFolder, 'O-RAW_log.txt')
-        # Configure logging
-        rLogger = logging.getLogger('radiomics')
-
-        # Set logging level
-        # rLogger.setLevel(logging.INFO)  # Not needed, default log level of logger is INFO
-        handler = logging.FileHandler(filename=progress_filename, mode='w')   # Create handler for writing to log file
-        handler.setFormatter(logging.Formatter('%(levelname)s:%(name)s: %(message)s'))
-        rLogger.addHandler(handler)
-        logger = rLogger.getChild('batch') # Initialize logging for batch log messages
-
         channel = connection.channel()
         channel.basic_qos(prefetch_count=1)
         channel.queue_declare(queue=self.service_name, durable=True)
         threads = []
         on_message_callback = functools.partial(self.on_message, args=(connection, threads))
         channel.basic_consume(self.service_name, on_message_callback)
-        logging.info('Listening to queue: %s', self.service_name)
 
         try:
             channel.start_consuming()

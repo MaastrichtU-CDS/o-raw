@@ -41,20 +41,7 @@ Read parameter file of Pyrex:
 '''
 def executeORAWbatch_roi(myWorkingDirectory,roi,myStructUID,exportDir,export_format,export_name):
     outPath = r''
-    #read Params file of Pyradiomics
-    loggingFolder = os.path.join(outPath, 'log')
-    if not os.path.exists(loggingFolder):
-        os.makedirs(loggingFolder)
-    progress_filename = os.path.join(loggingFolder, 'O-RAW_log.txt')
-    # Configure logging
-    rLogger = logging.getLogger('radiomics')
-
-    # Set logging level
-    # rLogger.setLevel(logging.INFO)  # Not needed, default log level of logger is INFO
-    handler = logging.FileHandler(filename=progress_filename, mode='w')   # Create handler for writing to log file
-    handler.setFormatter(logging.Formatter('%(levelname)s:%(name)s: %(message)s'))
-    rLogger.addHandler(handler)
-    logger = rLogger.getChild('batch') # Initialize logging for batch log messages
+    logger = logging.getLogger('radiomics')
 
     # Set verbosity level for output to stderr (default level = WARNING)
     #radiomics.setVerbosity(logging.INFO)
