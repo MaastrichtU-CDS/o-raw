@@ -130,7 +130,7 @@ def executeORAWbatch_all(ptid,roi,myStructUID,exportDir,export_format,export_nam
   # return RESULT
       if export_format == 'csv':
           logger.info('Extraction complete, writing CSV')          
-          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+ myStructUID+'.csv')     
+          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+'.'+myStructUID+'.csv')     
           RESULT.T.to_csv(outputFilepath, index=False, na_rep='NaN')
           logger.info('CSV writing complete')
           logger.info('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
@@ -228,7 +228,7 @@ def executeORAWbatch_roi(ptid,roi,myStructUID,exportDir,export_format,export_nam
   # return RESULT
       if export_format == 'csv':
           logger.info('Extraction complete, writing CSV')          
-          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+ myStructUID+'.csv')     
+          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+'.'+myStructUID+'.csv')     
           RESULT.T.to_csv(outputFilepath, index=False, na_rep='NaN')
           logger.info('CSV writing complete')
           logger.info('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
