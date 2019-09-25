@@ -1,4 +1,5 @@
 # Ontology-guided Radiomics Analysis Workflow (O-RAW) verison 2.1
+# *** Important: The current version of O-RAW only supports PyRadiomics verison 2.1. New version of O-RAW that will be released soon supports the lastest PyRadiomics.
 
 ## This repository accompanies the publication 'Technical Note: Ontology-guided Radiomics Analysis Workflow (O-RAW)'
 ## The publication of O-RAW is coming soon. Please cite the webpage when you use it for academic research.
@@ -19,7 +20,7 @@ O-RAW is still under development. Although we have tested and evaluated the work
 
 ## Two componenets
 
-1. [PyRadiomcs] (https://github.com/Radiomics/pyradiomics)
+1. [PyRadiomcs] (https://github.com/Radiomics/pyradiomics). 
 2. [Py-rex] (https://github.com/zhenweishi/Py-rex)
 
 ## Features
