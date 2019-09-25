@@ -90,8 +90,7 @@ def CalculationRun(imageName,maskName,paramsFile):
 	logger.addHandler(handler)
 
 	# Initialize feature extractor using the settings file
-	extractor = featureextractor.RadiomicsFeaturesExtractor(paramsFile)
-
+	extractor = featureextractor.RadiomicsFeatureExtractor(paramsFile)
 	# Uncomment one of these functions to show how PyRadiomics can use the 'tqdm' or 'click' package to report progress when
 	# running in full python mode. Assumes the respective package is installed (not included in the requirements)
 	#print("Calculating features:")

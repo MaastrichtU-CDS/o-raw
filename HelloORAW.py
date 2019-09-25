@@ -33,10 +33,9 @@ start_time = process_time()
 # roi = 'all'
 roi = '[Gg][Tt][Vv]'
 export_format = 'csv'
-#export_format = 'rdf'
+# export_format = 'rdf'
 export_name = 'ORAW_'
 walk_dir = './data/CT'
-
 #-----------------create tmp CT/STRUCT directories-----------
 CTWorkingDir = "./CTFolder"
 STRUCTWorkingDir = "./StructFolder"
