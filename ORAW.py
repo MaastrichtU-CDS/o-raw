@@ -14,7 +14,7 @@ Created on Fri Mar 23 07:32:46 2018
 
 import PyrexReader
 import PyrexWithParams
-import PyrexOutput
+import Pyrex2RDF
 import yaml
 # from PyrexXNAT import ParseStructure, xnat_collection
 import logging
@@ -23,7 +23,7 @@ import pandas
 import radiomics
 import re
 from rdflib import Graph
-import time
+
 '''
 Usage for individual case: python HelloPyrexBatchProcessing.py 
 
@@ -116,8 +116,8 @@ def executeORAWbatch_all(ptid,roi,myStructUID,exportDir,export_format,export_nam
               else:# save results in triple store
                   try:
                     featureVector = PyrexWithParams.CalculationRun(Image,Mask,paramsFile) #compute radiomics
-                    featureVector.update({'patient':patient[entry],'contour':target[k],'RTid':myStructUID}) #add patient ID and contour                
-                    graph_roi = PyrexOutput.RadiomicsRDF(featureVector,exportDir,patient[entry],myStructUID,target[k],export_format,export_name) #store radiomics locally with a specific format 
+                    # featureVector.update({'patient':patient[entry],'contour':target[k],'RTid':myStructUID}) #add patient ID and contour                
+                    graph_roi = Pyrex2RDF.RadiomicsRDF(featureVector,patient[entry],myStructUID,target[k]) #store radiomics locally with a specific format 
                     RESULT = RESULT + graph_roi
                     #print
                     logger.info('Extraction complete, writing rdf')
@@ -130,7 +130,7 @@ def executeORAWbatch_all(ptid,roi,myStructUID,exportDir,export_format,export_nam
   # return RESULT
       if export_format == 'csv':
           logger.info('Extraction complete, writing CSV')          
-          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+ myStructUID+'.csv')     
+          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+ '_' + target[k] +'.csv')     
           RESULT.T.to_csv(outputFilepath, index=False, na_rep='NaN')
           logger.info('CSV writing complete')
           logger.info('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')
@@ -215,8 +215,8 @@ def executeORAWbatch_roi(ptid,roi,myStructUID,exportDir,export_format,export_nam
               else:# save results in triple store
                   try:
                     featureVector = PyrexWithParams.CalculationRun(Image,Mask,paramsFile) #compute radiomics
-                    featureVector.update({'patient':patient[entry],'contour':target[k],'RTid':myStructUID}) #add patient ID and contour                
-                    graph_roi = PyrexOutput.RadiomicsRDF(featureVector,exportDir,patient[entry],myStructUID,target[k],export_format,export_name) #store radiomics locally with a specific format 
+                    # featureVector.update({'patient':patient[entry],'contour':target[k],'structUID':myStructUID}) #add patient ID and contour                
+                    graph_roi = Pyrex2RDF.RadiomicsRDF(featureVector,patient[entry],myStructUID,target[k]) #store radiomics locally with a specific format 
                     RESULT = RESULT + graph_roi
                     logger.info('Extraction complete, writing rdf')
                   except Exception:
@@ -228,7 +228,7 @@ def executeORAWbatch_roi(ptid,roi,myStructUID,exportDir,export_format,export_nam
   # return RESULT
       if export_format == 'csv':
           logger.info('Extraction complete, writing CSV')          
-          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+ myStructUID+'.csv')     
+          outputFilepath = os.path.join(exportDir,export_name+patient[entry]+ '_' + target[k] +'.csv')     
           RESULT.T.to_csv(outputFilepath, index=False, na_rep='NaN')
           logger.info('CSV writing complete')
           logger.info('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%')

@@ -79,15 +79,15 @@ def CalculationRun(imageName,maskName,paramsFile):
 	# Regulate verbosity with radiomics.verbosity
 	# radiomics.setVerbosity(logging.INFO)
 
-	# Get the PyRadiomics logger (default log-level = INFO
-	logger = radiomics.logger
-	logger.setLevel(logging.DEBUG)  # set level to DEBUG to include debug log messages in log file
+	# # Get the PyRadiomics logger (default log-level = INFO
+	# logger = radiomics.logger
+	# logger.setLevel(logging.DEBUG)  # set level to DEBUG to include debug log messages in log file
 
-	# Write out all log entries to a file
-	handler = logging.FileHandler(filename='testLog.txt', mode='w')
-	formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
-	handler.setFormatter(formatter)
-	logger.addHandler(handler)
+	# # Write out all log entries to a file
+	# handler = logging.FileHandler(filename='testLog.txt', mode='w')
+	# formatter = logging.Formatter("%(levelname)s:%(name)s: %(message)s")
+	# handler.setFormatter(formatter)
+	# logger.addHandler(handler)
 
 	# Initialize feature extractor using the settings file
 	extractor = featureextractor.RadiomicsFeatureExtractor(paramsFile)

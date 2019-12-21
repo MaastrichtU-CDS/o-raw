@@ -7,7 +7,7 @@ imageType:
     # binWidth: 10 
     # sigma: [1.0, 2.0, 3.0]
   # Wavelet:
-    # binWidth: 5
+  #   binWidth: 5
 
 featureClass:
 

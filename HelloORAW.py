@@ -35,7 +35,7 @@ roi = '[Gg][Tt][Vv]'
 export_format = 'csv'
 # export_format = 'rdf'
 export_name = 'ORAW_'
-walk_dir = './data/CT'
+walk_dir = './data/BMS'
 #-----------------create tmp CT/STRUCT directories-----------
 CTWorkingDir = "./CTFolder"
 STRUCTWorkingDir = "./StructFolder"
@@ -50,35 +50,6 @@ if not os.path.exists(STRUCTWorkingDir):
 dicomDb = DicomDatabase()
 # walk over all files in folder, and index in the database
 dicomDb.parseFolder(walk_dir)
-
-# -----------------------------------------------------------
-# Export data to RDF endpoint
-# import json
-# import requests
-# import urllib
-# import os
-# import subprocess
-# from time import sleep
-
-# # Set default URL of RDF4J DB
-# baseUrl = "http://172.17.0.3:7200"
-# if os.environ.get("RDF4J_URL") is not None:
-#     baseUrl = os.environ.get("RDF4J_URL")
-
-# # Set default repo
-# repo = "data"
-# if os.environ.get("DBNAME") is not None:
-#     repo = os.environ.get("DBNAME")
-
-# # Set default named graph
-# localGraphName = "radiomics.local"
-# if os.environ.get("NAMED_GRAPH") is not None:
-#     localGraphName = os.environ.get("NAMED_GRAPH")
-
-# # Set interval between executions
-# sleepTime = 60
-# if os.environ.get("INTERVAL") is not None:
-#     sleepTime = int(os.environ.get("INTERVAL"))
 
 excludeStructRegex = "(Patient.*|BODY.*|Body.*|NS.*|Couch.*)"
 if os.environ.get("EXCLUDE_STRUCTURE_REGEX") is not None:
@@ -126,17 +97,6 @@ for ptid in dicomDb.getPatientIds():
             else:
                 ORAW.executeORAWbatch_roi([ptid],roi,myStructUID,exportDir,export_format,export_name,[CTWorkingDir],[STRUCTWorkingDir],excludeStructRegex)
             #####################
-            # Load RDF store with new data
-            #####################
-            # get string of turtle triples (nt format)
-            # turtle = graph.serialize(format='nt')
-            # # upload to RDF store
-            # loadRequest = requests.post(baseUrl + "/repositories/" + repo + "/rdf-graphs/" + localGraphName,
-            #     data=turtle, 
-            #     headers={
-            #         "Content-Type": "text/turtle"
-            #     }
-            # )
         print("Done for struct %s of patient %s" % (myStructUID, ptid))
 stop_time = process_time()
 print("--- %s seconds ---" % (stop_time - start_time)) 
